@@ -2,16 +2,18 @@
 
 #include <Arduino.h>
 #include <ESP8266WiFi.h> //https://github.com/esp8266/Arduino
+#include <ESP8266Ping.h>
 
 //needed for library
 
 #include <PubSubClient.h>
 //define your default values here, if there are different values in config.json, they are overwritten.
-const char *ssid = "talli";
-const char *password = "";
-const char *mqtt_server = "192.168.0.3";
+const char *ssid = "ZyXEL";
+const char *password = "kopo2008";
+const char *mqtt_server = "192.168.1.201";
 const char *listentopic = "/talli/light";
 const char *statustopic = "/talli/lightstatus";
+const IPAddress remote_ip(192, 168, 1, 201);   //mqtt server(docker) ip
 
 char lightstate[4];
 //flag for saving data
@@ -111,7 +113,6 @@ void loop()
   }
 
   client.loop();
-<<<<<<< HEAD
   long now = millis();
 
   if (now - lastMsg > 2000)
@@ -120,7 +121,16 @@ void loop()
 
     client.publish("/talli/lightstatus", lightstate);
   }
+   if (millis() - lastMsg > 5000)
+  {
+    lastMsg = millis();
+      if(Ping.ping(remote_ip,1)) {
+    Serial.println("Success!!");
+  } else {
+    Serial.println("Error :(");
+     ESP.restart();
+  }
+
+  }
+  
 }
-=======
-}
->>>>>>> 414351d4355749d512ea86347f4433374e2d37e5
